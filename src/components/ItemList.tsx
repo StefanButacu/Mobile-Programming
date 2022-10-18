@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
     IonContent,
     IonFab,
     IonFabButton,
     IonFooter,
-    IonHeader, IonIcon,
+    IonHeader, IonIcon, IonList, IonLoading,
     IonPage,
     IonText,
     IonTitle,
@@ -13,17 +13,12 @@ import {
 import Item from "./Item";
 import {getLogger} from "../core/utils";
 import {add} from "ionicons/icons";
+import {useItems} from "./customHooks/addItem";
 
 const log = getLogger("ItemList");
 
 const ItemList: React.FC = () => {
-    let yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() -1 );
-    const [items, setItems] = useState( [
-        {id:1, foodName:"food1", price: 20, dateBought: new Date(), onSale:false},
-        {id:2, foodName:"food2", price: 23, dateBought: yesterday, onSale:true},
-    ]);
-    console.log(items);
+    const {items, fetching, fetchingError, addItem} = useItems();
     log('render');
     return (
         <IonPage>
@@ -33,10 +28,18 @@ const ItemList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
-                {items.map(({id, foodName, price, dateBought, onSale}) =>
+                <IonLoading isOpen={fetching} message="Fetching foods" />
+                {items && (
+                    <IonList>
+                        {items.map(({id, foodName, price, dateBought, onSale}) =>
                     <Item key={id} foodName={foodName} price={price} dateBought={dateBought} onSale={onSale}/> )}
+                    </IonList>
+                )}
+                {fetchingError && (
+                    <div>{fetchingError.message || 'Failed to fetch items'}</div>
+                )}
                 <IonFab vertical="bottom" horizontal="end" slot="fixed" >
-                    <IonFabButton onClick={() => console.log("ceva")}  >
+                    <IonFabButton onClick={addItem}  >
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>
