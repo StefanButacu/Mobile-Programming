@@ -13,7 +13,7 @@ import {
 import Item from "./Item";
 import {getLogger} from "../core/utils";
 import {add} from "ionicons/icons";
-import {useItems} from "./customHooks/addItem";
+import {useItems} from "./customHooks/useItems";
 
 const log = getLogger("ItemList");
 

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import {getLogger} from "../core/utils";
-import ItemProps from "./customHooks/addItem";
+import ItemProps from "./customHooks/useItems";
+import moment from "moment/moment";
 
 const log = getLogger("Item");
 
@@ -14,7 +15,9 @@ const Item: React.FC<ItemProps> =  ({id, foodName, price,dateBought, onSale}) =>
             <div>{foodName}</div>
             <div>{price}</div>
             <div> </div>
-            <div>{new Date(dateBought).toDateString()}</div>
+            {/*<div>{new Date(dateBought).toDateString()}</div>*/}
+            <div>{moment(dateBought).format('DD-MM-YYYY')} </div>
+            {/*<div>{new Date(dateBought).toString()} </div>*/}
             <div> { onSale ? 'on sale' : 'not on sale'}</div>
         </div>
     );

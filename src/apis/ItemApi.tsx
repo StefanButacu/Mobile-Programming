@@ -1,5 +1,5 @@
 import {getLogger} from "../core/utils";
-import ItemProps from "../components/customHooks/addItem";
+import ItemProps from "../components/customHooks/useItems";
 import axios from "axios";
 import {Simulate} from "react-dom/test-utils";
 import error = Simulate.error;
