@@ -1,24 +1,43 @@
 import {getLogger} from "../core/utils";
-import ItemProps from "../components/customHooks/useItems";
 import axios from "axios";
-import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
+import {ItemProps} from "../components/ItemProps";
 
 const log = getLogger('ItemApi');
 const baseURL = 'http://localhost:3000';
+const itemUrl = `${baseURL}/item`;
 
-export const getItems: () => Promise<ItemProps[]> = () =>{
-    log('getItems -started');
-    return axios
-        .get(`${baseURL}/item`)
+interface ResponseProps<T>{
+    data: T;
+}
+
+function withLogs<T>(promise: Promise<ResponseProps<T>>, functionName: string) : Promise<T> {
+    log(`${functionName} - started`);
+    return promise
         .then(res =>{
-            log('getItems - succeeded');
+            log(`${functionName} - succeeded`);
             return Promise.resolve(res.data);
         })
-        .catch(err =>{
-            log('getItems-failed');
+        .catch(err => {
+            log(`${functionName} - failed`);
             return Promise.reject(err);
         });
+}
 
+const config = {
+    headers:{
+        'Content-Type': 'application/json'
+    }
+};
+
+export const getItems: () => Promise<ItemProps[]> = () =>{
+    return withLogs(axios.get(itemUrl, config), 'getItems');
+}
+
+export const createItem: (item: ItemProps) => Promise<ItemProps[]> = item => {
+    return withLogs(axios.post(itemUrl, item, config), 'createItem');
+}
+
+export const updateItem: (item:ItemProps) => Promise<ItemProps[]> = item =>{
+    return withLogs(axios.put(`${itemUrl}/${item.id}`, item, config),  'updateItem');
 
 }

@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useContext, useState} from 'react';
 import {
     IonContent,
     IonFab,
@@ -13,12 +13,13 @@ import {
 import Item from "./Item";
 import {getLogger} from "../core/utils";
 import {add} from "ionicons/icons";
-import {useItems} from "./customHooks/useItems";
+import {RouteComponentProps} from "react-router";
+import {ItemContext} from "./ItemProvider";
 
 const log = getLogger("ItemList");
 
-const ItemList: React.FC = () => {
-    const {items, fetching, fetchingError, addItem} = useItems();
+const ItemList: React.FC<RouteComponentProps> = ({history}) => {
+    const {items, fetching, fetchingError} = useContext(ItemContext);
     log('render');
     return (
         <IonPage>
@@ -28,18 +29,20 @@ const ItemList: React.FC = () => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
+                <div>Hello world!</div>
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
                     <IonList>
                         {items.map(({id, foodName, price, dateBought, onSale}) =>
-                    <Item key={id} foodName={foodName} price={price} dateBought={dateBought} onSale={onSale}/> )}
+                    <Item key={id} id={id} foodName={foodName} price={price}
+                          dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )}
                     </IonList>
                 )}
                 {fetchingError && (
                     <div>{fetchingError.message || 'Failed to fetch items'}</div>
                 )}
                 <IonFab vertical="bottom" horizontal="end" slot="fixed" >
-                    <IonFabButton onClick={addItem}  >
+                    <IonFabButton onClick={() => history.push('/item')}  >
                         <IonIcon icon={add} />
                     </IonFabButton>
                 </IonFab>

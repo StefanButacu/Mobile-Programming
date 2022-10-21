@@ -1,25 +1,29 @@
 import React from 'react';
 
 import {getLogger} from "../core/utils";
-import ItemProps from "./customHooks/useItems";
 import moment from "moment/moment";
+import {ItemProps} from "./ItemProps";
+import {IonItem} from "@ionic/react";
 
 const log = getLogger("Item");
+interface ItemPropsExt extends ItemProps{
+    onEdit: (id?: number) => void;
+}
+const Item: React.FC<ItemPropsExt> =  ({id, foodName, price,dateBought, onSale, onEdit}) => {
 
-// dd/mm/yyyy
-const Item: React.FC<ItemProps> =  ({id, foodName, price,dateBought, onSale}) => {
-
-    log(`render ${foodName}, ${price}, date= ${dateBought}, ${onSale}`)
+    log(`returns`)
     return (
-        <div style={{border: "1px solid red"}}>
-            <div>{foodName}</div>
-            <div>{price}</div>
-            <div> </div>
-            {/*<div>{new Date(dateBought).toDateString()}</div>*/}
-            <div>{moment(dateBought).format('DD-MM-YYYY')} </div>
-            {/*<div>{new Date(dateBought).toString()} </div>*/}
-            <div> { onSale ? 'on sale' : 'not on sale'}</div>
-        </div>
+        <IonItem onClick={ () => onEdit(id)}>
+            <div style={{border: "1px solid red"}}>
+                <div>{foodName}</div>
+                <div>{price}</div>
+                <div> </div>
+                {/*<div>{new Date(dateBought).toDateString()}</div>*/}
+                <div>{moment(dateBought).format('DD-MM-YYYY')} </div>
+                {/*<div>{new Date(dateBought).toString()} </div>*/}
+                <div> { onSale ? 'on sale' : 'not on sale'}</div>
+            </div>
+        </IonItem>
     );
 };
 
