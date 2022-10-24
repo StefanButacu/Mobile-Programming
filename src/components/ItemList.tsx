@@ -28,8 +28,6 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
-
-                <div>Hello world!</div>
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
                     <IonList>

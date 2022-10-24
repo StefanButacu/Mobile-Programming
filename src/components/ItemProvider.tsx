@@ -1,6 +1,6 @@
 import React, {ReactNode, ReactNodeArray, useCallback, useEffect, useReducer} from 'react'
 import {getLogger} from "../core/utils";
-import {createItem, getItems, updateItem} from "../apis/ItemApi";
+import {createItem, getItems, newWebSocket, updateItem} from "../apis/ItemApi";
 import {ItemProps} from "./ItemProps";
 import PropTypes from 'prop-types';
 
@@ -48,8 +48,8 @@ const reducer: (state: ItemsState, action: ActionProps) => ItemsState = (state, 
         case SAVE_ITEM_SUCCEEDED:
             const items = [...(state.items || [])];
             const item = payload.item;
-            const index = items.findIndex(it => it.id == item.id);
-            if(index == -1){
+            const index = items.findIndex(it => it.id === item.id);
+            if(index === -1){
                 items.splice(0,0, item);
             }else{
                 items[index] = item;
@@ -67,25 +67,20 @@ export const ItemContext = React.createContext<ItemsState>(initialState);
 
 
 interface ItemProviderProps{
-    // children: ReactNode
     children: PropTypes.ReactNodeLike;
-    // children: PropTypes.ReactComponentLike;
 }
 export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
     const [state, dispatch] = useReducer(reducer, initialState);
     const {items, fetching, fetchingError, saving, savingError} = state;
     useEffect(getItemsEffect, []);
+    useEffect(wsEffect, []);
     const saveItem = useCallback<SaveItemFn>(saveItemCallback, []);
     const value = {items, fetching, fetchingError, saving, savingError, saveItem};
-    console.log(value);
     log('returns');
     return (
-        <>
-            <div>ItemProviderDivText</div>
-            <ItemContext.Provider value={value}>
-                <div>ItemContextProvider</div>
-                {children}
-            </ItemContext.Provider></>
+        <ItemContext.Provider value={value}>
+            {children}
+        </ItemContext.Provider>
     );
 
     function getItemsEffect() {
@@ -124,7 +119,24 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
             log('saveItem failed');
             dispatch({type: SAVE_ITEM_FAILED, payload: {error}});
         }
-
-
+    }
+    function wsEffect(){
+        let canceled = false;
+        log('wsEffect - connecting');
+        const closeWebSocket = newWebSocket(message => {
+            if ( canceled) {
+                return;
+            }
+            const {event, payload: {item}} = message;
+            log(`ws message, item ${event}`);
+            if(event === 'created' || event === 'update'){
+                dispatch({type: SAVE_ITEM_SUCCEEDED, payload: {item}});
+            }
+        });
+        return () => {
+            log('wsEffect - disconnecting');
+            canceled = true;
+            closeWebSocket();
+        }
     }
 }

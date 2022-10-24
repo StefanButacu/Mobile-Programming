@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 
 import {getLogger} from "../core/utils";
 import moment from "moment/moment";
@@ -7,13 +7,12 @@ import {IonItem} from "@ionic/react";
 
 const log = getLogger("Item");
 interface ItemPropsExt extends ItemProps{
-    onEdit: (id?: number) => void;
+    onEdit: (id?: string) => void;
 }
 const Item: React.FC<ItemPropsExt> =  ({id, foodName, price,dateBought, onSale, onEdit}) => {
-
-    log(`returns`)
+    const handleEdit = useCallback(() => onEdit(id), [id, onEdit])
     return (
-        <IonItem onClick={ () => onEdit(id)}>
+        <IonItem onClick={handleEdit}>
             <div style={{border: "1px solid red"}}>
                 <div>{foodName}</div>
                 <div>{price}</div>

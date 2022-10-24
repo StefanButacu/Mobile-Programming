@@ -35,7 +35,7 @@ const App: React.FC = () => (
             <Route exact = {true} path="/items" component={ItemList} />
             <Route exact ={true} path="/item" component={ItemEdit} />
             <Route exact ={true} path="/item/:id" component={ItemEdit}  />
-              <Route exact path="/" render={() => <Redirect to="/items" />}   />
+              <Route exact path="/" render={() => <Redirect to="/items" />}    />
           </IonRouterOutlet>
         </IonReactRouter>
     </ItemProvider>

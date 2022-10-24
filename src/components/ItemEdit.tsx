@@ -31,11 +31,9 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
     useEffect( () =>{
         log('useEffect');
         const routeId = match.params.id || '';
-        const item = items?.find(it => it.id == +routeId);
+        const item = items?.find(it => it.id == routeId);
         setItem(item);
         if(item){
-            // console.log(item.dateBought + " " + typeof item.dateBought);
-            // set text for inputs
             setFoodName(item.foodName);
             setPrice(item.price);
             setDateBought(new Date(Date.parse(item.dateBought.toString())));
