@@ -1,7 +1,8 @@
+import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import ItemList from './components/ItemList';
+import {ItemList} from './components/ItemList';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -23,7 +24,6 @@ import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import {ItemProvider} from "./components/ItemProvider";
 import ItemEdit from "./components/ItemEdit";
-import React from "react";
 
 setupIonicReact();
 
@@ -32,10 +32,10 @@ const App: React.FC = () => (
     <ItemProvider>
         <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/items" component={ItemList} exact = {true}/>
-            <Route path="/item" component={ItemEdit} exact ={true}/>
-            <Route path="/item/:id" component={ItemEdit} exact ={true} />
-            <Route path="/" render={() => <Redirect to="/items" />}   />
+            <Route exact = {true} path="/items" component={ItemList} />
+            <Route exact ={true} path="/item" component={ItemEdit} />
+            <Route exact ={true} path="/item/:id" component={ItemEdit}  />
+              <Route exact path="/" render={() => <Redirect to="/items" />}   />
           </IonRouterOutlet>
         </IonReactRouter>
     </ItemProvider>

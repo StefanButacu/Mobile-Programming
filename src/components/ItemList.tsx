@@ -5,7 +5,7 @@ import {
     IonFabButton,
     IonFooter,
     IonHeader, IonIcon, IonList, IonLoading,
-    IonPage,
+    IonPage, IonRadio, IonRadioGroup,
     IonText,
     IonTitle,
     IonToolbar
@@ -17,18 +17,18 @@ import {RouteComponentProps} from "react-router";
 import {ItemContext} from "./ItemProvider";
 
 const log = getLogger("ItemList");
-
-const ItemList: React.FC<RouteComponentProps> = ({history}) => {
+export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
     const {items, fetching, fetchingError} = useContext(ItemContext);
     log('render');
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
-                    <IonTitle>Lab PDM </IonTitle>
+                    <IonTitle>Lab PDM List </IonTitle>
                 </IonToolbar>
             </IonHeader>
             <IonContent>
+
                 <div>Hello world!</div>
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
@@ -55,4 +55,3 @@ const ItemList: React.FC<RouteComponentProps> = ({history}) => {
     );
 };
 
-export default ItemList;
