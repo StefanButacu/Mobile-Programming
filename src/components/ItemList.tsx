@@ -11,7 +11,7 @@ import {
     IonToolbar
 } from "@ionic/react";
 import Item from "./Item";
-import {getLogger} from "../core/utils";
+import {getLogger} from "../core";
 import {add} from "ionicons/icons";
 import {RouteComponentProps} from "react-router";
 import {ItemContext} from "./ItemProvider";

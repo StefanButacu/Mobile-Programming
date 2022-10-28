@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 
-import {getLogger} from "../core/utils";
+import {getLogger} from "../core";
 import moment from "moment/moment";
 import {ItemProps} from "./ItemProps";
 import {IonItem} from "@ionic/react";

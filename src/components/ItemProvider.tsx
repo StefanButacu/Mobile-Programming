@@ -1,5 +1,5 @@
 import React, {ReactNode, ReactNodeArray, useCallback, useEffect, useReducer} from 'react'
-import {getLogger} from "../core/utils";
+import {getLogger} from "../core";
 import {createItem, getItems, newWebSocket, updateItem} from "../apis/ItemApi";
 import {ItemProps} from "./ItemProps";
 import PropTypes from 'prop-types';

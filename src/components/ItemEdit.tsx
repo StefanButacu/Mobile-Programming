@@ -13,7 +13,7 @@ import {
     IonToolbar
 } from "@ionic/react";
 import {ItemProps} from "./ItemProps";
-import {getLogger} from "../core/utils";
+import {getLogger} from "../core";
 import {on} from "cluster";
 
 const log = getLogger('itemEdit');

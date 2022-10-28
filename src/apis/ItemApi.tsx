@@ -1,14 +1,9 @@
-import {getLogger} from "../core/utils";
+import {baseURL, config, getLogger, withLogs} from "../core";
 import axios from "axios";
 import {ItemProps} from "../components/ItemProps";
 
 const log = getLogger('ItemApi');
-const baseURL = 'localhost:3000';
 const itemUrl = `http://${baseURL}/item`;
-
-interface ResponseProps<T>{
-    data: T;
-}
 
 interface MessageData {
     event: string;
@@ -16,6 +11,7 @@ interface MessageData {
         item: ItemProps;
     };
 }
+
 export const newWebSocket = (onMessage: (data:MessageData) => void) =>{
     const ws = new WebSocket(`ws://${baseURL}`);
     ws.onopen = () => {
@@ -34,25 +30,6 @@ export const newWebSocket = (onMessage: (data:MessageData) => void) =>{
     return () => ws.close();
 
 }
-
-function withLogs<T>(promise: Promise<ResponseProps<T>>, functionName: string) : Promise<T> {
-    log(`${functionName} - started`);
-    return promise
-        .then(res =>{
-            log(`${functionName} - succeeded`);
-            return Promise.resolve(res.data);
-        })
-        .catch(err => {
-            log(`${functionName} - failed`);
-            return Promise.reject(err);
-        });
-}
-
-const config = {
-    headers:{
-        'Content-Type': 'application/json'
-    }
-};
 
 export const getItems: () => Promise<ItemProps[]> = () =>{
     return withLogs(axios.get(itemUrl, config), 'getItems');
