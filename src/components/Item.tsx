@@ -7,12 +7,13 @@ import {IonItem} from "@ionic/react";
 
 const log = getLogger("Item");
 interface ItemPropsExt extends ItemProps{
-    onEdit: (id?: string) => void;
+    onEdit: (_id?: string) => void;
 }
-const Item: React.FC<ItemPropsExt> =  ({id, foodName, price,dateBought, onSale, onEdit}) => {
-    const handleEdit = useCallback(() => onEdit(id), [id, onEdit])
+const Item: React.FC<ItemPropsExt> =  ({_id, foodName, price,dateBought, onSale, onEdit}) => {
+    // const handleEdit = useCallback(() => onEdit(_id), [_id, onEdit])
+    // onClick={handleEdit}
     return (
-        <IonItem onClick={handleEdit}>
+        <IonItem >
             <div style={{border: "1px solid red"}}>
                 <div>{foodName}</div>
                 <div>{price}</div>

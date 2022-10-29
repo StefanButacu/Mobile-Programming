@@ -1,5 +1,5 @@
 export interface ItemProps {
-    id?: string;
+    _id?: string;
     foodName: string;
     price: number;
     dateBought: Date;

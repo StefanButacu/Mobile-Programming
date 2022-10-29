@@ -1,9 +1,9 @@
-import {baseURL, config, getLogger, withLogs} from "../core";
+import {authConfig, baseURL, config, getLogger, withLogs} from "../core";
 import axios from "axios";
 import {ItemProps} from "../components/ItemProps";
 
 const log = getLogger('ItemApi');
-const itemUrl = `http://${baseURL}/item`;
+const itemUrl = `http://${baseURL}/api/item`;
 
 interface MessageData {
     event: string;
@@ -12,10 +12,11 @@ interface MessageData {
     };
 }
 
-export const newWebSocket = (onMessage: (data:MessageData) => void) =>{
+export const newWebSocket = (token: string, onMessage: (data:MessageData) => void) =>{
     const ws = new WebSocket(`ws://${baseURL}`);
     ws.onopen = () => {
         log('web socket onopen');
+        ws.send(JSON.stringify({type: 'authorization', payload :{token}}));
     }
     ws.onclose = () => {
         log('web socket onclose');
@@ -31,16 +32,15 @@ export const newWebSocket = (onMessage: (data:MessageData) => void) =>{
 
 }
 
-export const getItems: () => Promise<ItemProps[]> = () =>{
-    return withLogs(axios.get(itemUrl, config), 'getItems');
+export const getItems: (token: string) => Promise<ItemProps[]> = (token) =>{
+    return withLogs(axios.get(itemUrl, authConfig(token)), 'getItems');
 }
 
-export const createItem: (item: ItemProps) => Promise<ItemProps[]> = item => {
-    return withLogs(axios.post(itemUrl, item, config), 'createItem');
+export const createItem: (token: string, item: ItemProps) => Promise<ItemProps[]> = (token,item) => {
+    return withLogs(axios.post(itemUrl, item, authConfig(token)), 'createItem');
 }
 
-export const updateItem: (item:ItemProps) => Promise<ItemProps[]> = item =>{
-    return withLogs(axios.put(`${itemUrl}/${item.id}`, item, config),  'updateItem');
-
+export const updateItem: (token: string, item:ItemProps) => Promise<ItemProps[]> = (token, item) => {
+    return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateItem');
 }
 

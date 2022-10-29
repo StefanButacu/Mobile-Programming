@@ -19,6 +19,7 @@ import {ItemContext} from "./ItemProvider";
 const log = getLogger("ItemList");
 export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
     const {items, fetching, fetchingError} = useContext(ItemContext);
+    log('items: ', items);
     log('render');
     return (
         <IonPage>
@@ -31,8 +32,8 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
                     <IonList>
-                        {items.map(({id, foodName, price, dateBought, onSale}) =>
-                    <Item key={id} id={id} foodName={foodName} price={price}
+                        {items.map(({_id, foodName, price, dateBought, onSale}) =>
+                    <Item key={_id} _id={_id} foodName={foodName} price={price}
                           dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )}
                     </IonList>
                 )}
