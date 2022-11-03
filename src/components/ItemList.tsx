@@ -1,10 +1,11 @@
 import React, {useCallback, useContext, useState} from 'react';
 import {
+    IonButton,
     IonContent,
     IonFab,
     IonFabButton,
     IonFooter,
-    IonHeader, IonIcon, IonList, IonLoading,
+    IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonLoading,
     IonPage, IonRadio, IonRadioGroup,
     IonText,
     IonTitle,
@@ -12,29 +13,37 @@ import {
 } from "@ionic/react";
 import Item from "./Item";
 import {getLogger} from "../core";
-import {add} from "ionicons/icons";
+import {add, constructOutline} from "ionicons/icons";
 import {RouteComponentProps} from "react-router";
 import {ItemContext} from "./ItemProvider";
+import {AuthContext} from "../auth/AuthProvider";
 
 const log = getLogger("ItemList");
 export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
     const {items, fetching, fetchingError} = useContext(ItemContext);
+    const {logout} = useContext(AuthContext);
     log('items: ', items);
     log('render');
+
+    function handleLogout(){
+        logout?.();
+        history.push('/login');
+    }
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Lab PDM List </IonTitle>
+                    <IonButton onClick={handleLogout}>Logout</IonButton>
                 </IonToolbar>
             </IonHeader>
-            <IonContent>
+            <IonContent fullscreen>
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
                     <IonList>
                         {items.map(({_id, foodName, price, dateBought, onSale}) =>
-                    <Item key={_id} _id={_id} foodName={foodName} price={price}
-                          dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )}
+                         <Item key={_id} _id={_id} foodName={foodName} price={price}
+                               dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )}
                     </IonList>
                 )}
                 {fetchingError && (

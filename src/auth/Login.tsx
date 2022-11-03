@@ -30,10 +30,10 @@ export const Login: React.FC<RouteComponentProps> = ({history}) => {
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Login</IonTitle>
+                    <NetworkState/>
                 </IonToolbar>
             </IonHeader>
             <IonContent>
-                <NetworkState/>
                 <IonInput placeholder="Username"
                           value = {username}
                           onIonChange = {e => setState({...state, username: e.detail.value || ''})}

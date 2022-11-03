@@ -14,7 +14,7 @@ export interface ItemsState {
     fetchingError?: Error | null,
     saving: boolean,
     savingError?: Error | null,
-    saveItem?: SaveItemFn
+    saveItem?: SaveItemFn,
 }
 
 interface ActionProps{
@@ -28,12 +28,12 @@ const initialState: ItemsState = {
 }
 
 
-const FETCH_ITEMS_STARTED = 'FETCH_ITEMS_STARTED';
-const FETCH_ITEMS_SUCCEEDED = 'FETCH_ITEMS_SUCCEEDED';
-const FETCH_ITEMS_FAILED = 'FETCH_ITEMS_FAILED';
-const SAVE_ITEM_STARTED = 'SAVE_ITEM_STARTED';
-const SAVE_ITEM_SUCCEEDED = 'SAVE_ITEM_SUCCEEDED';
-const SAVE_ITEM_FAILED = 'SAVE_ITEM_FAILED';
+export const FETCH_ITEMS_STARTED = 'FETCH_ITEMS_STARTED';
+export const FETCH_ITEMS_SUCCEEDED = 'FETCH_ITEMS_SUCCEEDED';
+export const FETCH_ITEMS_FAILED = 'FETCH_ITEMS_FAILED';
+export const SAVE_ITEM_STARTED = 'SAVE_ITEM_STARTED';
+export const SAVE_ITEM_SUCCEEDED = 'SAVE_ITEM_SUCCEEDED';
+export const SAVE_ITEM_FAILED = 'SAVE_ITEM_FAILED';
 
 const reducer: (state: ItemsState, action: ActionProps) => ItemsState = (state, {type,payload}) =>{
 

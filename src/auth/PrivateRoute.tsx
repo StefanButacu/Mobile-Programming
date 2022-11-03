@@ -3,6 +3,7 @@ import {getLogger} from "../core";
 import PropTypes from "prop-types";
 import {AuthContext, AuthState} from "./AuthProvider";
 import {Redirect, Route} from "react-router-dom";
+import {Plugins} from "@capacitor/core";
 
 
 const log = getLogger('Login');
