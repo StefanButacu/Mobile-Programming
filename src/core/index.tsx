@@ -33,5 +33,4 @@ export const authConfig = (token?: string) => ({
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
     }
-
 })

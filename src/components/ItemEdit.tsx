@@ -14,13 +14,13 @@ import {
 } from "@ionic/react";
 import {ItemProps} from "./ItemProps";
 import {getLogger} from "../core";
-import {on} from "cluster";
 
 const log = getLogger('itemEdit');
 
 interface ItemEditProps extends RouteComponentProps<{
     id? : string;
 }> {}
+
 const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
     const {items, saving, savingError, saveItem} = useContext(ItemContext);
     const [item, setItem] = useState<ItemProps>();
@@ -41,10 +41,10 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
         }
 
     },[match.params.id, items]);
-    const handleSave = useCallback( () => {
+    const handleSave = () => {
         const editedItem = item ? {...item, foodName, price, dateBought, onSale} : {foodName, price, dateBought , onSale };
         saveItem && saveItem(editedItem).then(() => history.goBack());
-    }, [item, saveItem, foodName, price, dateBought, onSale, history]);
+    };
     return (
         <IonPage>
             <IonHeader>
@@ -79,7 +79,6 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                     <IonCheckbox checked={onSale} onIonChange={ e=>{
                         setOnSale(!onSale);
                     }
-
                     }></IonCheckbox>
                 </IonItem>
 
@@ -88,14 +87,9 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                    <div>{savingError.message || 'Failed to save item'}</div>
                )}
            </IonContent>
-
-
         </IonPage>
     )
 
 }
-
-
-
 
 export default ItemEdit;

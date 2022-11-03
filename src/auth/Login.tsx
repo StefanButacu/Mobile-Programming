@@ -4,6 +4,7 @@ import React, {useContext, useState} from "react";
 import {AuthContext} from "./AuthProvider";
 import {IonButton, IonContent, IonHeader, IonInput, IonLoading, IonPage, IonTitle, IonToolbar} from "@ionic/react";
 import {Redirect} from "react-router-dom";
+import {NetworkState} from "../components/NetworkState";
 
 
 const log = getLogger('Login');
@@ -32,6 +33,7 @@ export const Login: React.FC<RouteComponentProps> = ({history}) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent>
+                <NetworkState/>
                 <IonInput placeholder="Username"
                           value = {username}
                           onIonChange = {e => setState({...state, username: e.detail.value || ''})}
