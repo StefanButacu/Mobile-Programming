@@ -1,9 +1,12 @@
 import React, {ReactNode, useCallback, useContext, useEffect, useReducer} from 'react'
 import {getLogger} from "../core";
-import {createItem, getItems, newWebSocket, updateItem} from "../apis/ItemApi";
+import {createItem, getItems, newWebSocket, updateItem} from "../core/ItemApi";
 import {ItemProps} from "./ItemProps";
 import PropTypes from 'prop-types';
 import {AuthContext} from "../auth/AuthProvider";
+import {useNetwork} from "./useNetwork";
+import {Plugins} from "@capacitor/core";
+import {constructOutline, help} from "ionicons/icons";
 
 const log= getLogger('itemProvider');
 type SaveItemFn = (item:ItemProps) => Promise<any>;
@@ -74,8 +77,10 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
     const {token} = useContext(AuthContext);
     const [state, dispatch] = useReducer(reducer, initialState);
     const {items, fetching, fetchingError, saving, savingError} = state;
+    const {networkStatus} = useNetwork();
     useEffect(getItemsEffect, [token]);
     useEffect(wsEffect, [token]);
+    useEffect(executePendingOperations, [networkStatus.connected, token]);
     const saveItem = useCallback<SaveItemFn>(saveItemCallback, [token]);
     const value = {items, fetching, fetchingError, saving, savingError, saveItem};
     log('returns');
@@ -112,11 +117,35 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
         }
     }
 
+    function executePendingOperations(){
+        async function helperMethod(){
+            if(networkStatus.connected && token?.trim()){
+                log('executing pending operations')
+                const {Storage} = Plugins;
+                const {keys} = await Storage.keys();
+                for(const key of keys) {
+                    if(key.startsWith("sav-")){
+                        const res = await Storage.get({key: key});
+                        if (typeof res.value === "string") {
+                            const value = JSON.parse(res.value);
+                            log('creating item from pending', value);
+                            await createItem(value.token, value.item, networkStatus)
+                            await Storage.remove({key: key});
+                        }
+                    }
+                }
+            }
+        }
+        helperMethod();
+
+
+    }
+
     async function saveItemCallback(item: ItemProps){
         try{
             log('saveItem started');
             dispatch({type: SAVE_ITEM_STARTED});
-            const savedItem = await (item._id ? updateItem(token, item) : createItem(token, item));
+            const savedItem = await (item._id ? updateItem(token, item) : createItem(token, item, networkStatus));
             log('saveItem succeeded');
             dispatch({type:SAVE_ITEM_SUCCEEDED, payload: {item: savedItem}} );
         }catch (error){

@@ -1,6 +1,7 @@
-import {authConfig, baseURL, config, getLogger, withLogs} from "../core";
+import {authConfig, baseURL, config, getLogger, withLogs} from "./index";
 import axios from "axios";
 import {ItemProps} from "../components/ItemProps";
+import {Plugins} from "@capacitor/core";
 
 const log = getLogger('ItemApi');
 const itemUrl = `http://${baseURL}/api/item`;
@@ -36,8 +37,25 @@ export const getItems: (token: string) => Promise<ItemProps[]> = (token) =>{
     return withLogs(axios.get(itemUrl, authConfig(token)), 'getItems');
 }
 
-export const createItem: (token: string, item: ItemProps) => Promise<ItemProps[]> = (token,item) => {
-    return withLogs(axios.post(itemUrl, item, authConfig(token)), 'createItem');
+// @ts-ignore
+export const createItem: (token: string, item: ItemProps, networkStatus: any) => Promise<ItemProps[]> = (token,item, networkStatus) => {
+    function offlineActionGenerator() {
+        return new Promise<ItemProps[]>(async (resolve) => {
+            const {Storage} = Plugins;
+            await Storage.set({
+                key: `sav-${item.foodName}`,
+                value: JSON.stringify({token, item})
+            })
+            // @ts-ignore
+            resolve(item);
+        });
+    }
+        if(networkStatus.connected){
+            return withLogs(axios.post(itemUrl, item, authConfig(token)), 'createItem').catch( () => {
+                return offlineActionGenerator()
+            });
+        }
+        return offlineActionGenerator();
 }
 
 export const updateItem: (token: string, item:ItemProps) => Promise<ItemProps[]> = (token, item) => {

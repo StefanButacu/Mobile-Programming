@@ -6,7 +6,7 @@ import {
     IonFabButton,
     IonFooter,
     IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonList, IonLoading,
-    IonPage, IonRadio, IonRadioGroup,
+    IonPage, IonRadio, IonRadioGroup, IonSearchbar,
     IonText,
     IonTitle,
     IonToolbar
@@ -29,6 +29,10 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
         logout?.();
         history.push('/login');
     }
+    function handleTextChange(e: any){
+        log('text change');
+    }
+
     return (
         <IonPage>
             <IonHeader>
@@ -38,6 +42,8 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
+                <IonSearchbar  onIonChange={  e => handleTextChange(e)} />
+
                 <IonLoading isOpen={fetching} message="Fetching foods" />
                 {items && (
                     <IonList>

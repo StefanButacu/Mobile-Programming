@@ -1,5 +1,5 @@
 import axios from "axios";
-import {baseURL, config, withLogs} from '../core';
+import {baseURL, config, withLogs} from './index';
 
 
 const authUrl = `http://${baseURL}/api/auth/login`;
