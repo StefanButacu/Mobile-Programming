@@ -6,11 +6,11 @@ import PropTypes from 'prop-types';
 import {AuthContext} from "../auth/AuthProvider";
 import {useNetwork} from "./useNetwork";
 import {Plugins} from "@capacitor/core";
-import {constructOutline, help} from "ionicons/icons";
 import {useIonToast} from "@ionic/react";
 
 const log= getLogger('itemProvider');
-type SaveItemFn = (item:ItemProps) => Promise<any>;
+export type SaveItemFn = (item:ItemProps) => Promise<any>;
+export type SetSearchTextFn = (text: string) => void;
 
 export interface ItemsState {
     items?: ItemProps[],
@@ -19,6 +19,8 @@ export interface ItemsState {
     saving: boolean,
     savingError?: Error | null,
     saveItem?: SaveItemFn,
+    searchText: string,
+    setSearchText?: SetSearchTextFn
 }
 
 interface ActionProps{
@@ -29,6 +31,7 @@ interface ActionProps{
 const initialState: ItemsState = {
     fetching: false,
     saving: false,
+    searchText: ''
 }
 
 
@@ -38,6 +41,7 @@ export const FETCH_ITEMS_FAILED = 'FETCH_ITEMS_FAILED';
 export const SAVE_ITEM_STARTED = 'SAVE_ITEM_STARTED';
 export const SAVE_ITEM_SUCCEEDED = 'SAVE_ITEM_SUCCEEDED';
 export const SAVE_ITEM_FAILED = 'SAVE_ITEM_FAILED';
+const SET_SEARCH_TEXT = 'SET_SEARCH_TEXT';
 
 const reducer: (state: ItemsState, action: ActionProps) => ItemsState = (state, {type,payload}) =>{
 
@@ -53,16 +57,17 @@ const reducer: (state: ItemsState, action: ActionProps) => ItemsState = (state, 
         case SAVE_ITEM_SUCCEEDED:
             const items = [...(state.items || [])];
             const item = payload.item;
-            const index = items.findIndex(it => it._id === item._id);
+            let index = items.findIndex(it => it._id === item._id);
             if(index === -1){
                 items.splice(0,0, item);
             }else{
                 items[index] = item;
             }
             return {...state, items, saving:false};
-
         case SAVE_ITEM_FAILED:
             return {...state, savingError: payload.error, saving: false};
+        case SET_SEARCH_TEXT:
+            return {...state, searchText: payload.text};
         default:
             return state;
     }
@@ -77,7 +82,7 @@ interface ItemProviderProps{
 export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
     const {token} = useContext(AuthContext);
     const [state, dispatch] = useReducer(reducer, initialState);
-    const {items, fetching, fetchingError, saving, savingError} = state;
+    const {items, fetching, fetchingError, saving, savingError, searchText} = state;
     const {networkStatus} = useNetwork();
     const [present] = useIonToast();
 
@@ -85,7 +90,27 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
     useEffect(wsEffect, [token]);
     useEffect(executePendingOperations, [networkStatus.connected, token, present]);
     const saveItem = useCallback<SaveItemFn>(saveItemCallback, [token]);
-    const value = {items, fetching, fetchingError, saving, savingError, saveItem};
+
+    async function setSearchTextCallback(text: string) {
+        dispatch({type: SET_SEARCH_TEXT, payload:{text: text}});
+        await fetchItems();
+    }
+
+    async function fetchItems(){
+        if(!token.trim()){
+            return;
+        }
+        try{
+            dispatch({type:FETCH_ITEMS_STARTED});
+            const items = await getItems(token, searchText);
+            dispatch({type: FETCH_ITEMS_SUCCEEDED, payload:{items: items}});
+        }catch (error){
+            dispatch({type: FETCH_ITEMS_FAILED, payload: {error}});
+        }
+
+    }
+    const setSearchText = useCallback<SetSearchTextFn>(setSearchTextCallback, []);
+    const value = {items, fetching, fetchingError, saving, savingError, saveItem, searchText, setSearchText};
     log('returns');
     return (
         <ItemContext.Provider value={value}>
@@ -106,7 +131,7 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
             try{
                 log('fetchItems started');
                 dispatch({type:FETCH_ITEMS_STARTED});
-                const items = await getItems(token);
+                const items = await getItems(token,searchText);
                 log('fetchingItems succeded');
                 if(!canceled) {
                     dispatch({type:FETCH_ITEMS_SUCCEEDED, payload: {items} } );

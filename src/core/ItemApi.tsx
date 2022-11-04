@@ -33,7 +33,7 @@ export const newWebSocket = (token: string, onMessage: (data:MessageData) => voi
 
 }
 
-export const getItems: (token: string) => Promise<ItemProps[]> = (token) =>{
+export const getItems: (token: string, searchText: string) => Promise<ItemProps[]> = (token) =>{
     return withLogs(axios.get(itemUrl, authConfig(token)), 'getItems');
 }
 
