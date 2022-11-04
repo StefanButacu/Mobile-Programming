@@ -7,6 +7,7 @@ import {AuthContext} from "../auth/AuthProvider";
 import {useNetwork} from "./useNetwork";
 import {Plugins} from "@capacitor/core";
 import {constructOutline, help} from "ionicons/icons";
+import {useIonToast} from "@ionic/react";
 
 const log= getLogger('itemProvider');
 type SaveItemFn = (item:ItemProps) => Promise<any>;
@@ -78,9 +79,11 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
     const [state, dispatch] = useReducer(reducer, initialState);
     const {items, fetching, fetchingError, saving, savingError} = state;
     const {networkStatus} = useNetwork();
+    const [present] = useIonToast();
+
     useEffect(getItemsEffect, [token]);
     useEffect(wsEffect, [token]);
-    useEffect(executePendingOperations, [networkStatus.connected, token]);
+    useEffect(executePendingOperations, [networkStatus.connected, token, present]);
     const saveItem = useCallback<SaveItemFn>(saveItemCallback, [token]);
     const value = {items, fetching, fetchingError, saving, savingError, saveItem};
     log('returns');
@@ -129,7 +132,7 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
                         if (typeof res.value === "string") {
                             const value = JSON.parse(res.value);
                             log('creating item from pending', value);
-                            await createItem(value.token, value.item, networkStatus)
+                            await createItem(value.token, value.item, networkStatus, present)
                             await Storage.remove({key: key});
                         }
                     }
@@ -145,7 +148,7 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
         try{
             log('saveItem started');
             dispatch({type: SAVE_ITEM_STARTED});
-            const savedItem = await (item._id ? updateItem(token, item) : createItem(token, item, networkStatus));
+            const savedItem = await (item._id ? updateItem(token, item) : createItem(token, item, networkStatus, present));
             log('saveItem succeeded');
             dispatch({type:SAVE_ITEM_SUCCEEDED, payload: {item: savedItem}} );
         }catch (error){

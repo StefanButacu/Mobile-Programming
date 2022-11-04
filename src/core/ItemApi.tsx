@@ -38,10 +38,11 @@ export const getItems: (token: string) => Promise<ItemProps[]> = (token) =>{
 }
 
 // @ts-ignore
-export const createItem: (token: string, item: ItemProps, networkStatus: any) => Promise<ItemProps[]> = (token,item, networkStatus) => {
+export const createItem: (token: string, item: ItemProps, networkStatus: any, present: any) => Promise<ItemProps[]> = (token,item, networkStatus, present) => {
     function offlineActionGenerator() {
         return new Promise<ItemProps[]>(async (resolve) => {
             const {Storage} = Plugins;
+            present("Couldn't send data to the server, caching it locally", 3000);
             await Storage.set({
                 key: `sav-${item.foodName}`,
                 value: JSON.stringify({token, item})
