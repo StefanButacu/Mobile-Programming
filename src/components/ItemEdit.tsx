@@ -14,6 +14,7 @@ import {
 } from "@ionic/react";
 import {ItemProps} from "./ItemProps";
 import {getLogger} from "../core";
+import {NetworkState} from "./NetworkState";
 
 const log = getLogger('itemEdit');
 
@@ -50,6 +51,7 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Edit</IonTitle>
+                    <NetworkState/>
                     <IonButtons slot="end" >
                         <IonButton onClick={handleSave} >
                             Save

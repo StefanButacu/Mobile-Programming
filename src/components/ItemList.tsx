@@ -18,8 +18,9 @@ import {RouteComponentProps} from "react-router";
 import {ItemContext} from "./ItemProvider";
 import {AuthContext} from "../auth/AuthProvider";
 import {ItemProps} from "./ItemProps";
+import {NetworkState} from "./NetworkState";
 
-const indicesPresent = 10;
+const indicesPresent = 5;
 
 const log = getLogger("ItemList");
 export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
@@ -41,6 +42,10 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
         }
     }
 
+    function onlyUnique(value:any, index:any, self:any) {
+        return self.indexOf(value) === index;
+    }
+
     function fetchData(){
         if(items){
             const newIndex = Math.min(index + indicesPresent, items.length);
@@ -52,8 +57,7 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
             }
             setItemsAux(items.slice(0, newIndex));
             setIndex(newIndex);
-            setPrices(items.map( item => item.price));
-            log("Prices", prices);
+            setPrices(items.map( item => item.price).filter(onlyUnique));
         }
     }
     useIonViewWillEnter( async () => {
@@ -74,13 +78,12 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
         await fetchData();
         await ($event.target as HTMLIonInfiniteScrollElement).complete();
     }
-    // @ts-ignore
-    // @ts-ignore
     return (
         <IonPage>
             <IonHeader>
                 <IonToolbar>
                     <IonTitle>Lab PDM List </IonTitle>
+                    <NetworkState />
                     <IonButton onClick={handleLogout}>Logout</IonButton>
                 </IonToolbar>
             </IonHeader>
@@ -98,7 +101,7 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                     .filter(item => !filter || item.price == filter)
                     .filter (item => item.foodName.includes(searchText))
                         .map(({_id, foodName, price, dateBought, onSale}) =>
-                         <Item key={_id} _id={_id} foodName={foodName} price={price}
+                         <Item key={foodName} _id={_id} foodName={foodName} price={price}
                                dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )
                 }
 
