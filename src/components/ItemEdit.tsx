@@ -4,8 +4,8 @@ import {ItemContext} from "./ItemProvider";
 import {
     IonButton,
     IonButtons, IonCheckbox,
-    IonContent,
-    IonHeader,
+    IonContent, IonFab, IonFabButton,
+    IonHeader, IonIcon,
     IonInput, IonItem, IonLabel,
     IonLoading,
     IonPage, IonRadio, IonRadioGroup,
@@ -15,6 +15,9 @@ import {
 import {ItemProps} from "./ItemProps";
 import {getLogger} from "../core";
 import {NetworkState} from "./NetworkState";
+import {AuthContext} from "../auth/AuthProvider";
+import {usePhotoGallery} from "./photo/usePhoto";
+import {camera} from "ionicons/icons";
 
 const log = getLogger('itemEdit');
 
@@ -24,6 +27,9 @@ interface ItemEditProps extends RouteComponentProps<{
 
 const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
     const {items, saving, savingError, saveItem} = useContext(ItemContext);
+    const {token} = useContext(AuthContext);
+    const {photos, takePhoto, deletePhoto} = usePhotoGallery(token);
+
     const [item, setItem] = useState<ItemProps>();
     const [foodName, setFoodName] = useState('');
     const [price, setPrice] = useState(0);
@@ -46,6 +52,8 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
         const editedItem = item ? {...item, foodName, price, dateBought, onSale} : {foodName, price, dateBought , onSale };
         saveItem && saveItem(editedItem).then(() => history.goBack());
     };
+    let filteredPhotos = photos.filter(it => it.filepath.startsWith(`${foodName}=>`))
+
     return (
         <IonPage>
             <IonHeader>
@@ -82,12 +90,31 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                         setOnSale(!onSale);
                     }
                     }></IonCheckbox>
-                </IonItem>
+               </IonItem>
+                   <div>
+                       {
+                           filteredPhotos.map(photo =>
+                               <img height="300px"
+                                    src={photo!!.webviewPath}
+                                    // onClick={() => setPhotoToDelete(photo)}
+                                    alt="food"
+                               />
+                           )
+                       }
+                   </div>
 
                <IonLoading isOpen={saving} />
                {savingError && (
                    <div>{savingError.message || 'Failed to save item'}</div>
                )}
+               <IonFab vertical="bottom" horizontal="center" slot="fixed">
+                   <IonFabButton onClick={() => {
+                       takePhoto(foodName)
+                   }}>
+                       <IonIcon icon={camera}/>
+                   </IonFabButton>
+               </IonFab>
+
            </IonContent>
         </IonPage>
     )

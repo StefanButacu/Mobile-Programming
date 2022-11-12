@@ -62,3 +62,8 @@ export const updateItem: (token: string, item:ItemProps) => Promise<ItemProps[]>
     return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateItem');
 }
 
+
+
+export const uploadPhoto: (token: string, photo: string) => void = (token, photo) => {
+    axios.post(`${itemUrl}/photo`, photo, authConfig(token)).then(_ => {})
+}
