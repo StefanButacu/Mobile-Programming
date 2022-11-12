@@ -37,7 +37,6 @@ export const getItems: (token: string, searchText: string) => Promise<ItemProps[
     return withLogs(axios.get(itemUrl, authConfig(token)), 'getItems');
 }
 
-// @ts-ignore
 export const createItem: (token: string, item: ItemProps, networkStatus: any, present: any) => Promise<ItemProps[]> = (token,item, networkStatus, present) => {
     function offlineActionGenerator() {
         return new Promise<ItemProps[]>(async (resolve) => {

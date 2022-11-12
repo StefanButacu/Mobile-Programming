@@ -25,7 +25,6 @@ export const NetworkState: React.FC = () => {
                     Not Connected
                 </IonItem>
             }
-        {/*<div>App state is {JSON.stringify(appState)}</div>*/}
 
     </div>)
 }

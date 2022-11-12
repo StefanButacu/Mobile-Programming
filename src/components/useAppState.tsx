@@ -20,10 +20,8 @@ export const useAppState = () => {
             }
 
             function handleAppStateChange(state: AppState) {
-                console.log("useAppState - state change", state);
                 if (!canceled) {
                     setAppState(state);
-
                 }
             }
         }, [])
