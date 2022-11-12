@@ -17,10 +17,8 @@ export interface PrivateRouteProps{
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({component: Component, ...rest}) =>{
     const {isAuthenticated} = useContext<AuthState>(AuthContext);
     log('render, isAuthenticated', isAuthenticated);
-    /// TODO - console log props for router with path parameters
     return (
         <Route {...rest} render={props => {
-            console.log('Route props', props);
             if(isAuthenticated){
                 return <Component {...props} />;
             }

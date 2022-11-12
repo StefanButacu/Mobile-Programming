@@ -58,10 +58,28 @@ export const createItem: (token: string, item: ItemProps, networkStatus: any, pr
         return offlineActionGenerator();
 }
 
-export const updateItem: (token: string, item:ItemProps) => Promise<ItemProps[]> = (token, item) => {
-    return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateItem');
+export const updateItem: (token: string, item: ItemProps, networkStatus: any, present: any) => Promise<ItemProps[]> = (token, item, networkStatus, present) => {
+    function offlineActionGenerator() {
+        return new Promise<ItemProps[]>(async (resolve) => {
+            const {Storage} = Plugins;
+            present("Couldn't send data to the server, caching it locally", 3000)
+            await Storage.set({
+                key: `upd-${item.foodName}`,
+                value: JSON.stringify({
+                    token,
+                    item
+                })
+            })
+            // @ts-ignore
+            resolve(item)
+        })
+    }
+    if (networkStatus.connected)
+        return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateMeal').catch(() => {
+            return offlineActionGenerator()
+        });
+    return offlineActionGenerator()
 }
-
 
 
 export const uploadPhoto: (token: string, photo: string) => void = (token, photo) => {

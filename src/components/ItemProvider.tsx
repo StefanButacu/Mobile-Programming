@@ -173,7 +173,7 @@ export const ItemProvider: React.FC<ItemProviderProps> = ( { children } ) =>{
         try{
             log('saveItem started');
             dispatch({type: SAVE_ITEM_STARTED});
-            const savedItem = await (item._id ? updateItem(token, item) : createItem(token, item, networkStatus, present));
+            const savedItem = await (item._id ? updateItem(token, item, networkStatus, present) : createItem(token, item, networkStatus, present));
             log('saveItem succeeded');
             dispatch({type:SAVE_ITEM_SUCCEEDED, payload: {item: savedItem}} );
         }catch (error){

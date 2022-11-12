@@ -37,7 +37,7 @@ const App: React.FC = () => (
          <AuthProvider>
              <Route exact={true} path="/login" component={Login} />
             <ItemProvider>
-                <PrivateRoute exact = {true} path="/items" component={ItemList} />
+                <PrivateRoute exact ={true} path="/items" component={ItemList} />
                 <PrivateRoute exact ={true} path="/item" component={ItemEdit} />
                 <PrivateRoute exact ={true} path="/item/:id" component={ItemEdit}  />
             </ItemProvider>

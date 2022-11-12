@@ -2,6 +2,7 @@ import {RouteComponentProps} from "react-router";
 import React, {useCallback, useContext, useEffect, useState} from "react";
 import {ItemContext} from "./ItemProvider";
 import {
+    IonActionSheet,
     IonButton,
     IonButtons, IonCheckbox,
     IonContent, IonFab, IonFabButton,
@@ -16,8 +17,8 @@ import {ItemProps} from "./ItemProps";
 import {getLogger} from "../core";
 import {NetworkState} from "./NetworkState";
 import {AuthContext} from "../auth/AuthProvider";
-import {usePhotoGallery} from "./photo/usePhoto";
-import {camera} from "ionicons/icons";
+import {Photo, usePhotoGallery} from "./photo/usePhoto";
+import {camera, closeCircle, trash} from "ionicons/icons";
 
 const log = getLogger('itemEdit');
 
@@ -35,6 +36,10 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
     const [price, setPrice] = useState(0);
     const [dateBought, setDateBought] = useState(new Date());
     const [onSale, setOnSale] = useState(true);
+    const [photoToDelete, setPhotoToDelete] = useState<Photo>();
+    const handleBack = () => {
+        history.goBack()
+    }
     useEffect( () =>{
         log('useEffect');
         const routeId = match.params.id || '';
@@ -61,6 +66,9 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                     <IonTitle>Edit</IonTitle>
                     <NetworkState/>
                     <IonButtons slot="end" >
+                        <IonButton onClick={handleBack}>
+                            Back
+                        </IonButton>
                         <IonButton onClick={handleSave} >
                             Save
                         </IonButton>
@@ -87,16 +95,17 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                <IonItem>
                    <IonLabel position="fixed" >OnSale</IonLabel>
                     <IonCheckbox checked={onSale} onIonChange={ e=>{
-                        setOnSale(!onSale);
-                    }
-                    }></IonCheckbox>
+                        setOnSale(!onSale);}}>
+
+                    </IonCheckbox>
                </IonItem>
                    <div>
                        {
                            filteredPhotos.map(photo =>
                                <img height="300px"
+                                    key={photo!!.webviewPath}
                                     src={photo!!.webviewPath}
-                                    // onClick={() => setPhotoToDelete(photo)}
+                                    onClick={() => setPhotoToDelete(photo)}
                                     alt="food"
                                />
                            )
@@ -116,6 +125,26 @@ const ItemEdit:React.FC<ItemEditProps> = ({history, match}) =>{
                </IonFab>
 
            </IonContent>
+            <IonActionSheet
+                isOpen={!!photoToDelete}
+                buttons={[{
+                    text: 'Delete',
+                    role: 'destructive',
+                    icon: trash,
+                    handler: () => {
+                        if (photoToDelete) {
+                            deletePhoto(photoToDelete).then(_ => {
+                            });
+                            setPhotoToDelete(undefined);
+                        }
+                    }
+                }, {
+                    text: 'Cancel',
+                    icon: closeCircle,
+                    role: 'cancel'
+                }]}
+                onDidDismiss={() => setPhotoToDelete(undefined)}
+            />
         </IonPage>
     )
 

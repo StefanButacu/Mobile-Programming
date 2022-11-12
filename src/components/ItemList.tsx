@@ -122,7 +122,6 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 </IonFab>
             </IonContent>
             <IonFooter>
-             <IonText> Text From Footer</IonText>
             </IonFooter>
         </IonPage>
 
