@@ -19,12 +19,16 @@ import {ItemContext} from "./ItemProvider";
 import {AuthContext} from "../auth/AuthProvider";
 import {ItemProps} from "./ItemProps";
 import {NetworkState} from "./NetworkState";
+import {useMyLocation} from "./map/useMyLocation";
+import {MyMap} from "./map/MyMap";
 
 const indicesPresent = 5;
 
 const log = getLogger("ItemList");
 export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
     const {items, fetching, fetchingError, setSearchText, searchText} = useContext(ItemContext);
+    const myLocation = useMyLocation();
+    const {latitude: lat, longitude: lng} = myLocation.position?.coords || {latitude:5, longitude:5};
     const {logout} = useContext(AuthContext);
     const [itemsAux ,setItemsAux] = useState<ItemProps[]>([]);
     const [index, setIndex] = useState<number>(0);
@@ -88,6 +92,7 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
+                < MyMap/>
                 <IonSearchbar value={searchText} onIonChange={e=> handleTextChange(e)} />
                 <IonLabel>Select Price</IonLabel>
                 <IonSelect value={filter} placeholder="Select price" onIonChange={e => setFilter(e.detail.value)}>

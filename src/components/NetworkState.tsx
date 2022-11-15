@@ -8,10 +8,10 @@ import {IonItem} from "@ionic/react";
 export const NetworkState: React.FC = () => {
     const {appState} = useAppState();
     const {networkStatus} = useNetwork();
-    // useBackgroundTask( () => new Promise(resolve => {
-    //     console.log('My background Task');
-    //     resolve();
-    // }));
+    useBackgroundTask( () => new Promise(resolve => {
+        console.log('My background Task');
+        resolve();
+    }));
     return (
         <div>
             {
