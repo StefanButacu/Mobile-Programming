@@ -10,7 +10,7 @@ const log = getLogger("Item");
 interface ItemPropsExt extends ItemProps{
     onEdit: (_id?: string) => void;
 }
-const Item: React.FC<ItemPropsExt> =  ({_id, foodName, price,dateBought, onSale, onEdit}) => {
+const Item: React.FC<ItemPropsExt> =  ({_id, foodName, price,dateBought, onSale, latitude, longitude, onEdit}) => {
     const handleEdit = useCallback(() => onEdit(_id), [_id, onEdit])
     const {photos} = usePhotoGallery();
     let filteredPhotos = photos.filter(it => it.filepath.startsWith(`${foodName}=>`))

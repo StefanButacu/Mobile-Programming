@@ -4,4 +4,6 @@ export interface ItemProps {
     price: number;
     dateBought: Date;
     onSale: boolean;
+    latitude: number;
+    longitude: number;
 }

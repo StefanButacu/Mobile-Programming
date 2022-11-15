@@ -92,7 +92,7 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 </IonToolbar>
             </IonHeader>
             <IonContent fullscreen>
-                < MyMap/>
+                {/*< MyMap/>*/}
                 <IonSearchbar value={searchText} onIonChange={e=> handleTextChange(e)} />
                 <IonLabel>Select Price</IonLabel>
                 <IonSelect value={filter} placeholder="Select price" onIonChange={e => setFilter(e.detail.value)}>
@@ -105,9 +105,11 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                 {itemsAux
                     .filter(item => !filter || item.price == filter)
                     .filter (item => item.foodName.includes(searchText))
-                        .map(({_id, foodName, price, dateBought, onSale}) =>
+                        .map(({_id, foodName, price, dateBought, onSale, latitude, longitude}) =>
                          <Item key={foodName} _id={_id} foodName={foodName} price={price}
-                               dateBought={dateBought} onSale={onSale} onEdit={id => history.push(`/item/${id}`)}/> )
+                               dateBought={dateBought} onSale={onSale}
+                               latitude={latitude}  longitude={longitude}
+                               onEdit={id => history.push(`/item/${id}`)}/> )
                 }
 
                 </IonList>
