@@ -1,11 +1,12 @@
-import React, {useCallback, useContext, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {
+    createAnimation,
     IonButton,
     IonContent,
     IonFab,
     IonFabButton,
     IonFooter,
-    IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonLabel, IonList, IonLoading,
+    IonHeader, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonLabel, IonList, IonLoading, IonModal,
     IonPage, IonRadio, IonRadioGroup, IonSearchbar, IonSelect, IonSelectOption,
     IonText,
     IonTitle,
@@ -48,6 +49,19 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
 
     function onlyUnique(value:any, index:any, self:any) {
         return self.indexOf(value) === index;
+    }
+    useEffect(simpleAnimation, [])
+
+    function simpleAnimation() {
+        const el = document.querySelectorAll('.item-list');
+        if (el) {
+            const animation = createAnimation()
+                .addElement(el)
+                .duration(5000)
+                .iterations(1)
+                .fromTo('transform', 'translateX(50%)', 'translateX(0px)');
+            animation.play();
+        }
     }
 
     function fetchData(){
@@ -100,7 +114,7 @@ export const ItemList: React.FC<RouteComponentProps> = ({history}) => {
                     {prices.map(price => <IonSelectOption key={price} value={price}> {price} </IonSelectOption>)}
                 </IonSelect>
                 <IonLoading isOpen={fetching} message="Fetching foods" />
-                <IonList>
+                <IonList class="item-list">
 
                 {itemsAux
                     .filter(item => !filter || item.price == filter)
