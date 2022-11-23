@@ -74,10 +74,11 @@ export const updateItem: (token: string, item: ItemProps, networkStatus: any, pr
             resolve(item)
         })
     }
-    if (networkStatus.connected)
-        return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateMeal').catch(() => {
+    if (networkStatus.connected) {
+        return withLogs(axios.put(`${itemUrl}/${item._id}`, item, authConfig(token)), 'updateItem').catch(() => {
             return offlineActionGenerator()
         });
+    }
     return offlineActionGenerator()
 }
 
